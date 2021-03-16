@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akri-controller-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akri-controller
+  template:
+    metadata:
+      labels:
+        app: akri-controller
+    spec:
+      serviceAccountName: 'akri-controller-sa'
+      containers:
+      - name: akri-controller
+        image: "ghcr.io/deislabs/akri/controller:v0.1.5"
+        imagePullPolicy: Always
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      nodeSelector:
+        "kubernetes.io/os": linux

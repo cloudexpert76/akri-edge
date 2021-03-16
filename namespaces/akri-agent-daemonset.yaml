@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: akri-agent-daemonset
+spec:
+  selector:
+    matchLabels:
+      name: akri-agent
+  template:
+    metadata:
+      labels:
+        name: akri-agent
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        "kubernetes.io/os": linux
+      serviceAccountName: 'akri-agent-sa'
+      containers:
+      - name: akri-agent
+        image: "ghcr.io/deislabs/akri/agent:v0.1.5"
+        imagePullPolicy: Always
+        env:
+          - name: HOST_CRICTL_PATH
+            value: /host/usr/bin/crictl
+          - name: HOST_RUNTIME_ENDPOINT
+            value: unix:///host/var/run/dockershim.sock
+          - name: HOST_IMAGE_ENDPOINT
+            value: unix:///host/var/run/dockershim.sock
+          - name: AGENT_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        volumeMounts:
+          - name: device-plugin
+            mountPath: /var/lib/kubelet/device-plugins
+          - name: usr-bin-crictl
+            mountPath: /host/usr/bin/crictl
+          - name: var-run-dockershim
+            mountPath: /host/var/run/dockershim.sock
+          - name: devices
+            mountPath: /run/udev
+      volumes:
+      - name: device-plugin
+        hostPath:
+          path: "/var/lib/kubelet/device-plugins"
+      - name: usr-bin-crictl
+        hostPath:
+          path: "/usr/bin/crictl"
+      - name: var-run-dockershim
+        hostPath:
+          path: "/var/run/dockershim.sock"
+      - name: devices
+        hostPath:
+          path: "/run/udev"
