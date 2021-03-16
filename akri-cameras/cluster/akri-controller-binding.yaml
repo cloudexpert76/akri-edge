@@ -9,4 +9,4 @@ roleRef:
 subjects:
   - kind: 'ServiceAccount'
     name: 'akri-controller-sa'
-    namespace: default
+    namespace: akri-system
