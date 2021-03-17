@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akri-video-streaming-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akri-video-streaming-app
+  template:
+    metadata:
+      labels:
+        app: akri-video-streaming-app
+    spec:
+      serviceAccountName: akri-video-streaming-app-sa
+      containers:
+      - name: akri-video-streaming-app
+        image: ghcr.io/deislabs/akri/video-streaming-app:latest-dev
+        imagePullPolicy: Always
+        env:
+        # Streamer works in two modes; either specify the following commented
+        # block of env vars to explicitly target cameras (update the <id>s for
+        # your specific cameras) or
+        # specify a Akri configuration name to pick up cameras automatically
+        # - name: CAMERAS_SOURCE_SVC
+        #   value: "akri-udev-video-svc"
+        # - name: CAMERA_COUNT
+        #   value: "2"
+        # - name: CAMERA1_SOURCE_SVC
+        #   value: "akri-udev-video-<id>-svc"
+        # - name: CAMERA2_SOURCE_SVC
+        #   value: "akri-udev-video-<id>-svc"
+        - name: CONFIGURATION_NAME
+          value: akri-udev-video
