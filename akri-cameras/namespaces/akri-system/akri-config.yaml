@@ -6,12 +6,21 @@ spec:
   protocol:
     udev:
       udevRules:
-      - KERNEL=="video[0-9]*"
+      - KERNEL=="video[0-1]*"
   brokerPodSpec:
     containers:
     - name: akri-udev-video-broker
       image: "ghcr.io/deislabs/akri/udev-video-broker"
       imagePullPolicy: Always
+      env:
+        - name: FORMAT
+          value: "JPEG"
+        - name: FRAMES_PER_SECOND
+          value: "30"
+        - name: RESOLUTION_HEIGHT
+          value: "800"
+        - name: RESOLUTION_WIDTH
+          value: "1000"
       securityContext:
         privileged: true
       resources:
