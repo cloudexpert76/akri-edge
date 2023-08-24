@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: akri-video-streaming-app
+  name: akri-video-streaming-app_1
   namespace: akri-system
   labels:
     app: akri-video-streaming-app
@@ -11,5 +11,5 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 5000
+    targetPort: 5000i
   type: LoadBalancer
